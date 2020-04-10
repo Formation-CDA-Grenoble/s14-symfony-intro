@@ -4,11 +4,13 @@
 
 {% block main %}
 <h1>Publier des contenus</h1>
+<h2>Articles que vous avez publiés</h2>
 <table class="table table-striped">
     <thead>
         <tr>
             <th scope="col">#</th>
             <th scope="col">Titre</th>
+            <th scope="col">Catégorie</th>
             <th scope="col">Modifier</th>
             <th scope="col">Supprimer</th>
         </tr>
@@ -20,6 +22,11 @@
                 <td>
                     <a href="{{ path('article_show', {id: article.id}) }}">
                         {{ article.title }}
+                    </a>
+                </td>
+                <td>
+                    <a href="{{ path('category_show', {id: article.category.id}) }}">
+                        {{ article.category.name }}
                     </a>
                 </td>
                 <td>
@@ -37,4 +44,57 @@
 <a href="{{ path('article_new_form') }}" class="btn btn-success">
     Créer un nouvel article
 </a>
+
+{% if is_granted('ROLE_ADMIN') %}
+<h2>Articles publiés par les autres utilisateurs</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Titre</th>
+            <th scope="col">Catégorie</th>
+            <th scope="col">Auteur</th>
+            <th scope="col">Modifier</th>
+            <th scope="col">Supprimer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for article in articles %}
+            {% if article.author != app.user %}
+                <tr>
+                    <th scope="row">{{ article.id }}</th>
+                    <td>
+                        <a href="{{ path('article_show', {id: article.id}) }}">
+                            {{ article.title }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('category_show', {id: article.category.id}) }}">
+                            {{ article.category.name }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if article.author == null %}
+                            Aucun
+                        {% else %}
+                            <a href="{{ path('user_show', {id: article.author.id}) }}">
+                                {{ article.author.name }}
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('article_edit_form', {id: article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ path('article_delete', {id: article.id}) }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
 {% endblock %}

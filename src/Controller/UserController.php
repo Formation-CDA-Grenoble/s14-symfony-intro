@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,11 +20,14 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UserController extends AbstractController
 {
     private $passwordEncoder;
+    private $urlGenerator;
+    private $security;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, UrlGeneratorInterface $urlGenerator)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, UrlGeneratorInterface $urlGenerator, Security $security)
     {
         $this->passwordEncoder = $passwordEncoder;
         $this->urlGenerator = $urlGenerator;
+        $this->security = $security;
     }
 
     /**
@@ -75,10 +80,17 @@ class UserController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/publish", name="publish")
      */
-    public function publish()
+    public function publish(ArticleRepository $articleRepository)
     {
-        return $this->render('user/publish.html.twig');
+        $parameters = [];
+
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            $parameters['articles'] = $articleRepository->findAll();
+        }
+
+        return $this->render('user/publish.html.twig', $parameters);
     }
 }

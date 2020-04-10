@@ -90,6 +90,8 @@ class ArticleController extends AbstractController
      */
     public function editForm(Article $article, CategoryRepository $categoryRepository)
     {
+        $this->denyAccessUnlessGranted('EDIT', $article);
+
         $categories = $categoryRepository->findAll();
 
         return $this->render('article/edit.html.twig', [
@@ -110,6 +112,8 @@ class ArticleController extends AbstractController
         UrlGeneratorInterface $urlGenerator
     )
     {
+        $this->denyAccessUnlessGranted('EDIT', $article);
+
         $category = $categoryRepository->find($request->request->get('category'));
 
         $article
@@ -136,6 +140,8 @@ class ArticleController extends AbstractController
         UrlGeneratorInterface $urlGenerator
     )
     {
+        $this->denyAccessUnlessGranted('EDIT', $article);
+
         $entityManager->remove($article);
 
         $entityManager->flush();
