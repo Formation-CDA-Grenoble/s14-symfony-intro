@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -40,6 +41,7 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/create", methods={"GET"}, name="new_form")
      */
     public function newForm(CategoryRepository $categoryRepository)
@@ -53,6 +55,7 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/create", methods={"POST"}, name="process_new")
      */
     public function processNew(
@@ -82,6 +85,7 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/{id<\d+>}/edit", methods={"GET"}, name="edit_form")
      */
     public function editForm(Article $article, CategoryRepository $categoryRepository)
@@ -95,6 +99,7 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/{id<\d+>}/edit", methods={"POST"}, name="process_edit")
      */
     public function processEdit(
@@ -122,6 +127,7 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/{id<\d+>}/delete", methods={"POST"}, name="delete")
      */
     public function delete(
