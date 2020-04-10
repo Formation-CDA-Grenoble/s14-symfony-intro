@@ -57,15 +57,27 @@ class ArticleController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $article = $form->getData();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $article = $form->getData();
 
-            $article->setAuthor($this->getUser());
+                $article->setAuthor($this->getUser());
 
-            $entityManager->persist($article);
-            $entityManager->flush();
+                $entityManager->persist($article);
+                $entityManager->flush();
 
-            return new RedirectResponse($urlGenerator->generate('article_show', ['id' => $article->getId()]));
+                $this->addFlash(
+                    'success',
+                    'Le nouvel article a été créé avec succès!'
+                );    
+
+                return new RedirectResponse($urlGenerator->generate('article_show', ['id' => $article->getId()]));
+            } else {
+                $this->addFlash(
+                    'danger',
+                    'Veuillez corriger les erreurs dans le formulaire!'
+                );
+            }
         }
 
         return $this->render('article/edit.html.twig', [
@@ -94,8 +106,15 @@ class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $article = $form->getData();
 
+            $article->setUpdatedAt(new \DateTime());
+
             $entityManager->persist($article);
             $entityManager->flush();
+
+            $this->addFlash(
+                'success',
+                'L\'article a été modifié avec succès!'
+            );    
 
             return new RedirectResponse($urlGenerator->generate('article_show', ['id' => $article->getId()]));
         }

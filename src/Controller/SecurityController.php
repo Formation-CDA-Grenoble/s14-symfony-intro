@@ -78,6 +78,11 @@ class SecurityController extends AbstractController
 
         $entityManager->flush();
 
+        $this->addFlash(
+            'success',
+            'Vous avez bien été inscrit à l\'application!'
+        );
+
         return new RedirectResponse($this->urlGenerator->generate('app_login'));
     }
 }
