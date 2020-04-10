@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -36,16 +37,11 @@ class UserController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/edit", methods={"GET"}, name="edit_form")
      */
     public function editForm()
     {
-        $user = $this->getUser();
-
-        if (is_null($user)) {
-            throw $this->createAccessDeniedException('Vous devez être connecté pour voir cette page');
-        }
-
         return $this->render('user/edit.html.twig', [
             'user' => $user
         ]);
