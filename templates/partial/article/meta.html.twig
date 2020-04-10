@@ -1,6 +1,11 @@
 <p>
     <small>
-        Ecrit par <a href="{{ path('user_show', {id: article.author.id}) }}">{{ article.author.name }}</a>
+        Ecrit par 
+        {% if article.author == null %}
+            Anonyme
+        {% else %}
+            <a href="{{ path('user_show', {id: article.author.id}) }}">{{ article.author.name }}</a>
+        {% endif %}
     </small>
 </p>
 <p>
