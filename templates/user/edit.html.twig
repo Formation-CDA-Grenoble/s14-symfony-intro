@@ -6,7 +6,7 @@
 <form method="post">
     <h1 class="h3 mb-3 font-weight-normal">Modifier mes informations de profil</h1>
     <label for="inputName">Nom d'utilisateur</label>
-    <input type="text" value="{{ user.name }}" name="name" id="inputName" class="form-control" required autofocus>
+    <input type="text" value="{{ app.user.name }}" name="name" id="inputName" class="form-control" required autofocus>
     <label for="inputPassword">Mot de passe</label>
     <input type="password" name="password" id="inputPassword" class="form-control">
     <button class="btn btn-primary" type="submit">
