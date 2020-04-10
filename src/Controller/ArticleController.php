@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Form\ArticleEditType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,46 +43,35 @@ class ArticleController extends AbstractController
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/create", methods={"GET"}, name="new_form")
+     * @Route("/create", name="new")
      */
-    public function newForm(CategoryRepository $categoryRepository)
-    {
-        $categories = $categoryRepository->findAll();
-
-        return $this->render('article/edit.html.twig', [
-            'categories' => $categories,
-            'article' => null
-        ]);
-    }
-
-    /**
-     * @IsGranted("ROLE_USER")
-     * @Route("/create", methods={"POST"}, name="process_new")
-     */
-    public function processNew(
+    public function new(
         Request $request,
-        CategoryRepository $categoryRepository,
         EntityManagerInterface $entityManager,
         UrlGeneratorInterface $urlGenerator
     )
     {
         $article = new Article();
 
-        $category = $categoryRepository->find($request->request->get('category'));
+        $form = $this->createForm(ArticleEditType::class, $article);
 
-        $article
-            ->setTitle($request->request->get('title'))
-            ->setCover($request->request->get('cover'))
-            ->setContent($request->request->get('content'))
-            ->setAuthor($this->getUser())
-            ->setCategory($category)
-        ;
+        $form->handleRequest($request);
 
-        $entityManager->persist($article);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $article = $form->getData();
 
-        $entityManager->flush();
-        
-        return new RedirectResponse($urlGenerator->generate('article_show', ['id' => $article->getId()]));
+            $article->setAuthor($this->getUser());
+
+            $entityManager->persist($article);
+            $entityManager->flush();
+
+            return new RedirectResponse($urlGenerator->generate('article_show', ['id' => $article->getId()]));
+        }
+
+        return $this->render('article/edit.html.twig', [
+            'article' => $article,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**

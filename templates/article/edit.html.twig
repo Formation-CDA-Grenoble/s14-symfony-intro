@@ -3,34 +3,10 @@
 {% block title %}Créer un nouvel article{% endblock %}
 
 {% block main %}
-<h1>{{ article == null ? 'Créer' : 'Modifier' }} un article</h1>
-<form method="post">
-    <div class="form-group">
-        <label for="inputTitle">Titre</label>
-        <input type="text" class="form-control" name="title" id="inputTitle" required autofocus value="{{ article == null ? '' : article.title }}" />
-    </div>
-    <div class="form-group">
-        <label for="selectCategory">Catégorie</label>
-        <select class="form-control" name="category" id="selectCategory" required>
-            {% for category in categories %}
-                <option value={{ category.id }} {{ article == null ? '' :
-                    article.category.id == category.id ? 'selected="selected"' : ''
-                }}>
-                    {{ category.name }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="inputCover">Image de couverture</label>
-        <input type="text" class="form-control" name="cover" id="inputCover" required value="{{ article == null ? '' : article.cover }}"  />
-    </div>
-    <div class="form-group">
-        <label for="inputContent">Contenu</label>
-        <textarea class="form-control" name="content" id="inputContent" rows="4" required >{{ article == null ? '' : article.content }}</textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">
-        Valider
-    </button>
-</form>
+<h1>{{ article.id == null ? 'Créer' : 'Modifier' }} un article</h1>
+
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+{{ form_end(form) }}
+
 {% endblock %}
