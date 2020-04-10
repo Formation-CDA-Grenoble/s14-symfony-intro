@@ -76,48 +76,34 @@ class ArticleController extends AbstractController
 
     /**
      * @IsGranted("ROLE_USER")
-     * @Route("/{id<\d+>}/edit", methods={"GET"}, name="edit_form")
+     * @Route("/{id<\d+>}/edit", name="edit")
      */
-    public function editForm(Article $article, CategoryRepository $categoryRepository)
-    {
-        $this->denyAccessUnlessGranted('EDIT', $article);
-
-        $categories = $categoryRepository->findAll();
-
-        return $this->render('article/edit.html.twig', [
-            'categories' => $categories,
-            'article' => $article
-        ]);
-    }
-
-    /**
-     * @IsGranted("ROLE_USER")
-     * @Route("/{id<\d+>}/edit", methods={"POST"}, name="process_edit")
-     */
-    public function processEdit(
+    public function edit(
         Article $article,
         Request $request,
-        CategoryRepository $categoryRepository,
         EntityManagerInterface $entityManager,
         UrlGeneratorInterface $urlGenerator
     )
     {
         $this->denyAccessUnlessGranted('EDIT', $article);
 
-        $category = $categoryRepository->find($request->request->get('category'));
+        $form = $this->createForm(ArticleEditType::class, $article);
 
-        $article
-            ->setTitle($request->request->get('title'))
-            ->setCover($request->request->get('cover'))
-            ->setContent($request->request->get('content'))
-            ->setCategory($category)
-        ;
+        $form->handleRequest($request);
 
-        $entityManager->persist($article);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $article = $form->getData();
 
-        $entityManager->flush();
-        
-        return new RedirectResponse($urlGenerator->generate('article_show', ['id' => $article->getId()]));
+            $entityManager->persist($article);
+            $entityManager->flush();
+
+            return new RedirectResponse($urlGenerator->generate('article_show', ['id' => $article->getId()]));
+        }
+
+        return $this->render('article/edit.html.twig', [
+            'article' => $article,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**

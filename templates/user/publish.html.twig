@@ -30,7 +30,7 @@
                     </a>
                 </td>
                 <td>
-                    <a href="{{ path('article_edit_form', {id: article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
+                    <a href="{{ path('article_edit', {id: article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
                 </td>
                 <td>
                     <form method="post" action="{{ path('article_delete', {id: article.id}) }}">
@@ -83,7 +83,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('article_edit_form', {id: article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
+                        <a href="{{ path('article_edit', {id: article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
                     </td>
                     <td>
                         <form method="post" action="{{ path('article_delete', {id: article.id}) }}">
